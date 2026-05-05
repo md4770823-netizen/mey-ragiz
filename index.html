@@ -468,43 +468,80 @@
       </div>
     </div>
 
-    <!-- Q5 - Open -->
+    <!-- Q5 - Coping -->
     <div class="card">
       <div class="question-label">
         <div class="q-num">5</div>
+        <div>
+          <div class="q-text">מה עוזר לך להתמודד עם מעי רגיז בשגרת החיים?</div>
+          <div class="q-hint">ניתן לבחור כמה תשובות</div>
+        </div>
+      </div>
+      <div class="options" id="q5">
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">הימנעות ממזונות מסוימים</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">פעילות גופנית</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">תרופות / תוספים</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">הפחתת סטרס / מדיטציה</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">שיחה עם אנשים שעוברים אותו דבר</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">כלום — עדיין לא מצאתי מה עוזר</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q6 - Open -->
+    <div class="card">
+      <div class="question-label">
+        <div class="q-num">6</div>
         <div>
           <div class="q-text">אם הייתה תוכנית שעוזרת לנהל מעי רגיז — מה הכי חשוב לך שתכלול?</div>
           <div class="q-hint">שאלה פתוחה — כתוב/י בחופשיות</div>
         </div>
       </div>
       <div class="textarea-wrapper">
-        <textarea id="q5" placeholder="כתוב/י כאן..." maxlength="500" oninput="updateCharCount()"></textarea>
+        <textarea id="q6open" placeholder="כתוב/י כאן..." maxlength="500" oninput="updateCharCount()"></textarea>
         <div class="char-count"><span id="charCount">0</span> / 500</div>
       </div>
     </div>
 
-    <!-- Q6 -->
+    <!-- Q7 -->
     <div class="card">
       <div class="question-label">
-        <div class="q-num">6</div>
+        <div class="q-num">7</div>
         <div>
           <div class="q-text">האם היית משלם/ת על תוכנית כזו?</div>
         </div>
       </div>
-      <div class="options" id="q6">
-        <div class="option radio" onclick="selectRadio('q6', this)">
+      <div class="options" id="q7">
+        <div class="option radio" onclick="selectRadio('q7', this)">
           <div class="cb-box"><span class="cb-check">✓</span></div>
           <span class="option-text">כן, עד 20 ש"ח בחודש</span>
         </div>
-        <div class="option radio" onclick="selectRadio('q6', this)">
+        <div class="option radio" onclick="selectRadio('q7', this)">
           <div class="cb-box"><span class="cb-check">✓</span></div>
           <span class="option-text">כן, עד 40 ש"ח בחודש</span>
         </div>
-        <div class="option radio" onclick="selectRadio('q6', this)">
+        <div class="option radio" onclick="selectRadio('q7', this)">
           <div class="cb-box"><span class="cb-check">✓</span></div>
           <span class="option-text">רק אם יש גרסה חינמית</span>
         </div>
-        <div class="option radio" onclick="selectRadio('q6', this)">
+        <div class="option radio" onclick="selectRadio('q7', this)">
           <div class="cb-box"><span class="cb-check">✓</span></div>
           <span class="option-text">לא</span>
         </div>
@@ -551,16 +588,17 @@
     const q2 = document.querySelectorAll('#q2 .selected').length > 0;
     const q3 = document.querySelectorAll('#q3 .selected').length > 0;
     const q4 = document.querySelectorAll('#q4 .selected').length > 0;
-    const q5 = document.getElementById('q5').value.trim().length > 0;
-    const q6 = document.querySelectorAll('#q6 .selected').length > 0;
+    const q5 = document.querySelectorAll('#q5 .selected').length > 0;
+    const q6 = document.getElementById('q6open').value.trim().length > 0;
+    const q7 = document.querySelectorAll('#q7 .selected').length > 0;
 
-    const answered = [q1, q2, q3, q4, q5, q6].filter(Boolean).length;
-    const pct = Math.round((answered / 6) * 100);
+    const answered = [q1, q2, q3, q4, q5, q6, q7].filter(Boolean).length;
+    const pct = Math.round((answered / 7) * 100);
     document.getElementById('progressFill').style.width = pct + '%';
   }
 
   function updateCharCount() {
-    const len = document.getElementById('q5').value.length;
+    const len = document.getElementById('q6open').value.length;
     document.getElementById('charCount').textContent = len;
     updateProgress();
   }
@@ -580,8 +618,9 @@
       q2: getSelected('q2'),
       q3: getSelected('q3'),
       q4: getSelected('q4'),
-      q5: document.getElementById('q5').value.trim() || 'לא מולא',
-      q6: getSelected('q6'),
+      q5: getSelected('q5'),
+      q6: document.getElementById('q6open').value.trim() || 'לא מולא',
+      q7: getSelected('q7'),
     };
 
     emailjs.send("Adva1234", "template_n4kinhi", params)

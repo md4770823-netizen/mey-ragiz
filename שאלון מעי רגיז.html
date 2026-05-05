@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>שאלון — חיים עם מעי רגיז</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init("nTqsr7D-goS3zTLbm");</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #0d9488;
+    --teal-light: #ccfbf1;
+    --teal-mid: #14b8a6;
+    --teal-dark: #0f766e;
+    --bg: #f0fdfa;
+    --card: #ffffff;
+    --text: #134e4a;
+    --muted: #5eead4;
+    --border: #99f6e4;
+    --accent: #f97316;
+  }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 40px 16px 60px;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(13,148,136,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(20,184,166,0.06) 0%, transparent 50%);
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .header .badge {
+    display: inline-block;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 5px 16px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .header h1 span {
+    color: var(--teal);
+  }
+  .header p {
+    font-size: 15px;
+    color: #64748b;
+    font-weight: 400;
+    max-width: 440px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Progress */
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 100px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--teal-mid));
+    border-radius: 100px;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 28px 28px 24px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(153,246,228,0.5);
+    box-shadow: 0 1px 3px rgba(13,148,136,0.06), 0 4px 16px rgba(13,148,136,0.04);
+    transition: box-shadow 0.2s;
+  }
+  .card:hover {
+    box-shadow: 0 2px 8px rgba(13,148,136,0.1), 0 8px 24px rgba(13,148,136,0.07);
+  }
+
+  .question-label {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .q-num {
+    min-width: 28px;
+    height: 28px;
+    background: var(--teal);
+    color: white;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .q-text {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .q-hint {
+    font-size: 12.5px;
+    font-weight: 400;
+    color: #94a3b8;
+    margin-top: 3px;
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: #fafffe;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .option:hover {
+    border-color: var(--teal-mid);
+    background: var(--teal-light);
+  }
+  .option.selected {
+    border-color: var(--teal);
+    background: var(--teal-light);
+    box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
+  }
+
+  /* Custom checkbox */
+  .cb-box {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid #cbd5e1;
+    background: white;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+  .option.selected .cb-box {
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+  .cb-check {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.15s ease;
+    color: white;
+    font-size: 13px;
+    line-height: 1;
+  }
+  .option.selected .cb-check {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Radio style (single select) */
+  .option.radio .cb-box {
+    border-radius: 50%;
+  }
+  .option.radio.selected .cb-box {
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+  .option.radio.selected .cb-box::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+    position: absolute;
+  }
+  .option.radio.selected .cb-check {
+    display: none;
+  }
+
+  .option-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: #334155;
+    flex: 1;
+    line-height: 1.4;
+  }
+  .option.selected .option-text {
+    color: var(--teal-dark);
+    font-weight: 600;
+  }
+
+  /* Textarea */
+  .textarea-wrapper {
+    position: relative;
+  }
+  textarea {
+    width: 100%;
+    min-height: 120px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: #fafffe;
+    padding: 14px 16px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    direction: rtl;
+    line-height: 1.6;
+  }
+  textarea::placeholder { color: #94a3b8; }
+  textarea:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
+    background: white;
+  }
+  .char-count {
+    text-align: left;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 6px;
+  }
+
+  /* Submit */
+  .submit-area {
+    text-align: center;
+    margin-top: 24px;
+  }
+  .btn-submit {
+    background: linear-gradient(135deg, var(--teal), var(--teal-mid));
+    color: white;
+    font-family: 'Heebo', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 16px 48px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(13,148,136,0.3);
+    letter-spacing: 0.02em;
+  }
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13,148,136,0.4);
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+  }
+  .btn-submit:active {
+    transform: translateY(0);
+  }
+
+  /* Footer note */
+  .footer-note {
+    text-align: center;
+    margin-top: 28px;
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.7;
+  }
+  .footer-note .heart { color: var(--accent); }
+
+  /* Success state */
+  .success-state {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .success-state .icon {
+    width: 72px;
+    height: 72px;
+    background: var(--teal-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 32px;
+  }
+  .success-state h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .success-state p {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">אנונימי לחלוטין · 2 דקות בלבד</div>
+    <h1>חיים עם <span>מעי רגיז</span></h1>
+    <p>המטרה שלנו להבין טוב יותר מה הכי קשה לאנשים עם מעי רגיז ואיך אפשר לעזור.</p>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <!-- Form -->
+  <div id="formContainer">
+
+    <!-- Q1 -->
+    <div class="card">
+      <div class="question-label">
+        <div class="q-num">1</div>
+        <div>
+          <div class="q-text">מה גילך?</div>
+        </div>
+      </div>
+      <div class="options" id="q1">
+        <div class="option radio" onclick="selectRadio('q1', this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">18–25</span>
+        </div>
+        <div class="option radio" onclick="selectRadio('q1', this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">26–35</span>
+        </div>
+        <div class="option radio" onclick="selectRadio('q1', this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">36–50</span>
+        </div>
+        <div class="option radio" onclick="selectRadio('q1', this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">50+</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="card">
+      <div class="question-label">
+        <div class="q-num">2</div>
+        <div>
+          <div class="q-text">כמה זמן את/ה סובל/ת ממעי רגיז?</div>
+        </div>
+      </div>
+      <div class="options" id="q2">
+        <div class="option radio" onclick="selectRadio('q2', this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">פחות משנה</span>
+        </div>
+        <div class="option radio" onclick="selectRadio('q2', this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">1–3 שנים</span>
+        </div>
+        <div class="option radio" onclick="selectRadio('q2', this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">יותר מ-3 שנים</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="card">
+      <div class="question-label">
+        <div class="q-num">3</div>
+        <div>
+          <div class="q-text">מה הכי מתסכל אותך?</div>
+          <div class="q-hint">ניתן לבחור כמה תשובות</div>
+        </div>
+      </div>
+      <div class="options" id="q3">
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">לא יודע/ת מה לאכול</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">לא יודע/ת מה גורם לכאב</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">קשה למצוא מידע אמין</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">מרגיש/ה לבד עם זה</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">משפיע על החיים החברתיים</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">משפיע על החיים האישיים והזוגיות</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">משפיע על העבודה / הלימודים</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="card">
+      <div class="question-label">
+        <div class="q-num">4</div>
+        <div>
+          <div class="q-text">איך את/ה מנהל/ת את זה היום?</div>
+        </div>
+      </div>
+      <div class="options" id="q4">
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">גוגל / יוטיוב</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">דיאטנית / רופא</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">קבוצות פייסבוק / פורומים</span>
+        </div>
+        <div class="option" onclick="toggleCheckbox(this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">לא מנהל/ת, סובל/ת בשקט</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5 - Open -->
+    <div class="card">
+      <div class="question-label">
+        <div class="q-num">5</div>
+        <div>
+          <div class="q-text">אם הייתה תוכנית שעוזרת לנהל מעי רגיז — מה הכי חשוב לך שתכלול?</div>
+          <div class="q-hint">שאלה פתוחה — כתוב/י בחופשיות</div>
+        </div>
+      </div>
+      <div class="textarea-wrapper">
+        <textarea id="q5" placeholder="כתוב/י כאן..." maxlength="500" oninput="updateCharCount()"></textarea>
+        <div class="char-count"><span id="charCount">0</span> / 500</div>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="card">
+      <div class="question-label">
+        <div class="q-num">6</div>
+        <div>
+          <div class="q-text">האם היית משלם/ת על תוכנית כזו?</div>
+        </div>
+      </div>
+      <div class="options" id="q6">
+        <div class="option radio" onclick="selectRadio('q6', this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">כן, עד 20 ש"ח בחודש</span>
+        </div>
+        <div class="option radio" onclick="selectRadio('q6', this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">כן, עד 40 ש"ח בחודש</span>
+        </div>
+        <div class="option radio" onclick="selectRadio('q6', this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">רק אם יש גרסה חינמית</span>
+        </div>
+        <div class="option radio" onclick="selectRadio('q6', this)">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span class="option-text">לא</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-area">
+      <button class="btn-submit" onclick="submitForm()">שלח את התשובות שלי ✦</button>
+    </div>
+
+    <!-- Footer note -->
+    <div class="footer-note">
+      תודה רבה על הזמן שלך! <span class="heart">💙</span><br>
+      התשובות שלך יעזרו לנו לבנות משהו שבאמת עוזר.
+    </div>
+
+  </div><!-- /formContainer -->
+
+  <!-- Success -->
+  <div class="success-state" id="successState">
+    <div class="icon">💙</div>
+    <h2>תודה רבה!</h2>
+    <p>התשובות שלך התקבלו בהצלחה.<br>אתה עוזר לנו לבנות משהו שבאמת עוזר לאנשים עם מעי רגיז.</p>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+  function toggleCheckbox(el) {
+    el.classList.toggle('selected');
+    updateProgress();
+  }
+
+  function selectRadio(groupId, el) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const q1 = document.querySelectorAll('#q1 .selected').length > 0;
+    const q2 = document.querySelectorAll('#q2 .selected').length > 0;
+    const q3 = document.querySelectorAll('#q3 .selected').length > 0;
+    const q4 = document.querySelectorAll('#q4 .selected').length > 0;
+    const q5 = document.getElementById('q5').value.trim().length > 0;
+    const q6 = document.querySelectorAll('#q6 .selected').length > 0;
+
+    const answered = [q1, q2, q3, q4, q5, q6].filter(Boolean).length;
+    const pct = Math.round((answered / 6) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+
+  function updateCharCount() {
+    const len = document.getElementById('q5').value.length;
+    document.getElementById('charCount').textContent = len;
+    updateProgress();
+  }
+
+  function getSelected(groupId) {
+    const selected = document.querySelectorAll('#' + groupId + ' .selected .option-text');
+    return Array.from(selected).map(el => el.textContent).join(', ') || 'לא נבחר';
+  }
+
+  function submitForm() {
+    const btn = document.querySelector('.btn-submit');
+    btn.textContent = 'שולח...';
+    btn.disabled = true;
+
+    const params = {
+      q1: getSelected('q1'),
+      q2: getSelected('q2'),
+      q3: getSelected('q3'),
+      q4: getSelected('q4'),
+      q5: document.getElementById('q5').value.trim() || 'לא מולא',
+      q6: getSelected('q6'),
+    };
+
+    emailjs.send("Adva1234", "template_n4kinhi", params)
+      .then(() => {
+        document.getElementById('formContainer').style.display = 'none';
+        document.getElementById('successState').style.display = 'block';
+        document.getElementById('progressFill').style.width = '100%';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      })
+      .catch((err) => {
+        btn.textContent = 'שלח את התשובות שלי ✦';
+        btn.disabled = false;
+        alert('שגיאה בשליחה, נסה שוב.');
+        console.error(err);
+      });
+  }
+</script>
+</body>
+</html>
